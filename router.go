@@ -4,23 +4,10 @@ import (
     "fmt"
 	"strconv"
 	"github.com/gin-gonic/gin"
+    models "server/models"
 )
 
-type Vec2d struct {
-  X float64 `json:"x"`
-  Y float64 `json:"y"`
-}
-
-type ServerPlayer struct {
-  Id int `json:"id"`
-  Position Vec2d `json:"position"`
-}
-
-type Env struct {
-    players []*ServerPlayer
-}
-
-func (e *Env) getPlayer(id int) *ServerPlayer {
+func (e *Env) getPlayer(id int) *models.Player {
   for _, player := range e.players {
     if player.Id == id {
       return player
@@ -65,7 +52,7 @@ func (e *Env) getPlayerPosition(c *gin.Context) {
 func (e *Env) updatePlayerPosition(c *gin.Context) {
   id, _ := strconv.Atoi(c.Param("id"))
 
-  var translation Vec2d 
+  var translation models.Vec2d 
   c.BindJSON(&translation)
 
   e.getPlayer(id).Position.X += translation.X
@@ -77,7 +64,7 @@ func (e *Env) updatePlayerPosition(c *gin.Context) {
 
 
 func (e *Env) createPlayer(c *gin.Context) {
-  var newPlayer ServerPlayer
+  var newPlayer models.Player
   c.BindJSON(&newPlayer)
 
   newPlayer.Id = e.nextId()
@@ -85,11 +72,3 @@ func (e *Env) createPlayer(c *gin.Context) {
   e.players = append(e.players, &newPlayer)
   c.JSON(200, newPlayer)
 }
-
-func main() {
-  fmt.Println("Here we go")
-  env := &Env{}
-  r := SetupRouter(env)
-  r.Run(":8080")
-}
-
