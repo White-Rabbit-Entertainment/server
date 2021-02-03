@@ -87,5 +87,5 @@ func main() {
   player.init()
   player.getPlayerPosition()
   player.move(1, 1)
-  // player.getPlayerPosition()
+  player.getPlayerPosition()
 }
